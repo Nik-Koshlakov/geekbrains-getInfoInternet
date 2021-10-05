@@ -80,10 +80,13 @@ def getLastElement(items):
     return last
 
 
-response = requests.get(url + "/testlab", headers=headers)
-soup = bs(response.text, 'html.parser')
+def main():
+    response = requests.get(url + "/testlab", headers=headers)
+    soup = bs(response.text, 'html.parser')
 
-items = soup.find_all('a', attrs={'class': 'catalog__category-item'})
-catalog = getCatalog(items, 'Бытовая техника') #getLastElement(items)
+    items = soup.find_all('a', attrs={'class': 'catalog__category-item'})
+    catalog = getCatalog(items, 'Бытовая техника') #getLastElement(items)
 
-pprint(catalog)
+    return catalog
+
+    #pprint(catalog)
