@@ -9,7 +9,7 @@ headers = {
 
 
 def errorHandle(elem):
-    return None if elem is None else elem.text
+    return 0 if elem is None else int(elem.text)
 
 
 def getProdCatalog(items):
@@ -31,7 +31,7 @@ def getProdCatalog(items):
             if 'blacklist-desc' in rate['class'][0]:
                 mark = {'rate': '0', 'name': 'Черный список'}
             else:
-                mark = {'rate': rate.find('div', attrs={'class': 'right'}).text,
+                mark = {'rate': int(rate.find('div', attrs={'class': 'right'}).text),
                         'name': rate.find('div', attrs={'class': 'text'}).text}
             rating_block.append(mark)
 
@@ -40,9 +40,23 @@ def getProdCatalog(items):
 
     return array
 
+	
+def concat(string):
+    position = None
+    for i in range(len(string)):
+        if string[i].isdigit():
+            position = i
+            break
+
+    if position:
+        return string[0:position-1]
+
+    return string
+	
 
 def getCatalog(catalogs, lastElementName):
-    a, b = []
+    a = []
+	b = []
     for catalog in catalogs:
         if 'Птица' in catalog.text:
             return b
@@ -51,7 +65,7 @@ def getCatalog(catalogs, lastElementName):
             return data
 
         flag = False
-        data = {'name': catalog.text.replace('\n', ''),'reference': url + catalog['href']}
+        data = {'name': concat(catalog.text.replace('\n', '')[1:]),'reference': url + catalog['href']}
         response = requests.get(url + catalog['href'], headers)
         soup = bs(response.text, 'html.parser')
 
@@ -87,6 +101,7 @@ def main():
     items = soup.find_all('a', attrs={'class': 'catalog__category-item'})
     catalog = getCatalog(items, 'Бытовая техника') #getLastElement(items)
 
+	#pprint(catalog)
     return catalog
 
-    #pprint(catalog)
+    
